@@ -13,7 +13,7 @@ bool IO::ask_bool(const std::string &q)
 
     std::string res = ask_string(new_q);
 
-    return res.empty() || res == "y" || res == "Y";
+    return res.empty() || res == "y" || res == "Y" || res == "1";
 }
 
 double IO::ask_double(const std::string &q, double min, double max)
@@ -61,6 +61,16 @@ std::string IO::ask_string(const std::string &q)
     }
 
     return res;
+}
+
+void IO::wait_action(const std::string &q)
+{
+    std::cout << q << std::endl
+              << "Press any key to continue.";
+
+    std::string res;
+
+    std::cin >> res;
 }
 
 template <typename Min, typename Max>

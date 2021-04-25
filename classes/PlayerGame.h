@@ -22,10 +22,14 @@ public:
     PlayerGame(Player *player, bool is_cpu = false);
     ~PlayerGame();
 
+    virtual bool can_double() const override;
     std::string get_game_options() const;
     std::string get_player_name() const;
+    bool is_cpu_player() const;
     void make_bet();
+    bool match_end() const;
     void play(Dealer *delaer);
+    void result(bool win);
     void set_amount_bet(uint amount);
     virtual std::string sprint() const override;
 };

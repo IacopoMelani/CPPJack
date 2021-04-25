@@ -21,7 +21,9 @@ protected:
 
     void calc_results();
     void deal_initial_cards();
+    uint get_real_players_count();
     void reveal_hidden_cards();
+    void retake_cards(std::vector<Card *> cards);
     void retake_cards_from_players_game();
 
 public:

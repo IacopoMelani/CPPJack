@@ -14,7 +14,12 @@ Player::~Player()
 #endif // DEBUG
 }
 
-uint Player::get_bank_accout() const
+void Player::add_money(uint money)
+{
+    this->bank_account += money;
+}
+
+uint Player::get_bank_account() const
 {
     return this->bank_account;
 }
@@ -22,6 +27,18 @@ uint Player::get_bank_accout() const
 std::string Player::get_name() const
 {
     return this->name;
+}
+
+bool Player::remove_money(uint money)
+{
+    if (this->bank_account < money)
+    {
+        return false;
+    }
+
+    this->bank_account -= money;
+
+    return true;
 }
 
 std::string Player::sprint() const

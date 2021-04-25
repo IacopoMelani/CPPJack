@@ -22,8 +22,8 @@ public:
     ~CardBearer();
 
     virtual void add_card(Card *card, bool hide = false) override;
-    bool can_double() const;
-    unsigned int get_total_score(bool withHide = false) const;
+    virtual bool can_double() const;
+    uint get_total_score(bool withHide = false) const;
     bool is_blackjack() const;
     bool is_exceeded() const;
     bool is_over() const;

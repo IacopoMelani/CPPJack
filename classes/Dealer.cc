@@ -36,25 +36,50 @@ void Dealer::calc_results()
 {
     auto dealer_total_score = this->get_total_score();
 
-    for (auto player_game : this->players_game)
+    bool player_win = false;
+
+    auto iterator = std::begin(this->players_game);
+
+    while (iterator != std::end(this->players_game))
     {
-        auto player_game_total_score = player_game->get_total_score();
+        auto player_game = iterator.base();
+
+        uint player_game_total_score = (*player_game)->get_total_score();
 
         if (player_game_total_score > MAX_VALID_SCORE)
         {
-            std::cout << player_game->get_player_name() << " has lost, over " << MAX_VALID_SCORE << std::endl;
+            player_win = false;
+            std::cout << (*player_game)->get_player_name() << " has lost, over " << MAX_VALID_SCORE << std::endl;
         }
         else if (dealer_total_score > MAX_VALID_SCORE)
         {
-            std::cout << player_game->get_player_name() << " won, the dealer went over " << MAX_VALID_SCORE << std::endl;
+            player_win = true;
+            std::cout << (*player_game)->get_player_name() << " won, the dealer went over " << MAX_VALID_SCORE << std::endl;
         }
         else if (player_game_total_score <= dealer_total_score)
         {
-            std::cout << player_game->get_player_name() << " has lost, the dealer wins" << std::endl;
+            player_win = false;
+            std::cout << (*player_game)->get_player_name() << " has lost, the dealer wins" << std::endl;
         }
         else
         {
-            std::cout << player_game->get_player_name() << " wins with " << player_game_total_score << ", the dealer only made " << dealer_total_score << std::endl;
+            player_win = true;
+            std::cout << (*player_game)->get_player_name() << " wins with " << player_game_total_score << ", the dealer only made " << dealer_total_score << std::endl;
+        }
+
+        (*player_game)->result(player_win);
+
+        if ((*player_game)->match_end())
+        {
+            PlayerGame *toDelete = this->players_game.at(iterator - this->players_game.begin());
+            this->retake_cards(toDelete->return_cards());
+
+            iterator = this->players_game.erase(iterator);
+            delete toDelete;
+        }
+        else
+        {
+            ++iterator;
         }
     }
 }
@@ -90,6 +115,21 @@ Card *Dealer::deck_drawn_card()
 uint Dealer::get_max_num_players()
 {
     return MAX_NUM_PLAYERS;
+}
+
+uint Dealer::get_real_players_count()
+{
+    uint count = 0;
+
+    for (auto player_game : this->players_game)
+    {
+        if (!player_game->is_cpu_player())
+        {
+            count++;
+        }
+    }
+
+    return count;
 }
 
 void Dealer::init_players(const unsigned int nums_players)
@@ -188,16 +228,40 @@ void Dealer::play()
 
         this->retake_cards_from_players_game();
 
-#ifdef AUTO
-        if (counter++ == 5)
+        if (this->players_game.size() == 0)
         {
+#ifndef AUTO
+            IO::wait_action("The game is over. All players have lost.");
+#endif
             continue_play = false;
         }
+        else if (this->get_real_players_count() > 0)
+        {
+#ifdef AUTO
+            continue_play = true;
 #else
-        continue_play = IO::ask_bool("Another match?");
+            continue_play = IO::ask_bool("Another match?");
+#endif // AUTO
+        }
+        else
+        {
+#ifdef AUTO
+            continue_play = true;
+#else
+            continue_play = IO::ask_bool("You are out. do you want to continue watching the game?");
+#endif // AUTO
+        }
+
+#ifdef AUTO
+        ++counter;
+
 #endif // AUTO
 
     } while (continue_play);
+
+#ifdef AUTO
+    std::cout << "Auto mode terminated, total games: " << counter << std::endl;
+#endif // AUTO
 }
 
 void Dealer::prepare_player_games()
@@ -231,15 +295,20 @@ void Dealer::print_players() const
     }
 }
 
+void Dealer::retake_cards(std::vector<Card *> cards)
+{
+    for (auto card : cards)
+    {
+        this->deck->add_card(card);
+    }
+}
+
 void Dealer::retake_cards_from_players_game()
 {
     for (auto player_game : this->players_game)
     {
         auto cards = player_game->return_cards();
-        for (auto card : cards)
-        {
-            this->deck->add_card(card);
-        }
+        this->retake_cards(cards);
     }
 
     while (!this->cards.empty())

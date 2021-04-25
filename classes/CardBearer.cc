@@ -41,9 +41,9 @@ void CardBearer::check_aces()
     }
 }
 
-unsigned int CardBearer::get_total_score(bool withHide) const
+uint CardBearer::get_total_score(bool withHide) const
 {
-    unsigned int current_score = 0;
+    uint current_score = 0;
 
     for (auto card : this->cards)
     {

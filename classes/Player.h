@@ -20,8 +20,10 @@ public:
     Player(const std::string &name, uint bank_account = INITIAL_BANK_ACCOUNT);
     ~Player();
 
-    uint get_bank_accout() const;
+    void add_money(uint money);
+    uint get_bank_account() const;
     std::string get_name() const;
+    bool remove_money(uint money);
     virtual std::string sprint() const;
 };
 

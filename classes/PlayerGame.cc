@@ -1,5 +1,6 @@
 #include "PlayerGame.h"
 
+#include <cmath>
 #include <sstream>
 
 #include "Dealer.h"
@@ -36,6 +37,11 @@ bool PlayerGame::auto_play(Dealer *dealer)
     return true;
 }
 
+bool PlayerGame::can_double() const
+{
+    return CardBearer::can_double() && this->player->get_bank_account() >= this->amount_bet;
+}
+
 void PlayerGame::drawn_card_from_dealer(Dealer *dealer)
 {
     this->add_card(dealer->deck_drawn_card());
@@ -66,6 +72,11 @@ std::string PlayerGame::get_player_name() const
     return this->player->get_name();
 }
 
+bool PlayerGame::is_cpu_player() const
+{
+    return this->is_cpu;
+}
+
 void PlayerGame::make_bet()
 {
     std::ostringstream buffAsStdOStream;
@@ -73,13 +84,30 @@ void PlayerGame::make_bet()
     color::Modifier start = color::Modifier(color::Code::FG_GREEN);
     color::Modifier end = color::Modifier(color::Code::FG_DEFAULT);
 
+    uint amount_bet;
+
     if (this->is_cpu)
     {
-        return;
+        amount_bet = 1;
+    }
+    else
+    {
+#ifdef AUTO
+        amount_bet = 1;
+#else
+        buffAsStdOStream << "Insert amout bet, max availability is " << start << this->player->get_bank_account() << end << ": ";
+        amount_bet = IO::ask_uint(buffAsStdOStream.str(), 1, this->player->get_bank_account());
+#endif // AUTO
     }
 
-    buffAsStdOStream << "Insert amout bet, max availability is " << start << this->player->get_bank_accout() << end << ": ";
-    uint amount_best = IO::ask_uint(buffAsStdOStream.str(), 1, this->player->get_bank_accout());
+    this->amount_bet = amount_bet;
+
+    this->player->remove_money(amount_bet);
+}
+
+bool PlayerGame::match_end() const
+{
+    return this->player->get_bank_account() == 0;
 }
 
 void PlayerGame::play(Dealer *dealer)
@@ -120,10 +148,29 @@ bool PlayerGame::play_step(Dealer *dealer)
         break;
     case 3:
         this->drawn_card_from_dealer(dealer);
+        this->player->remove_money(this->amount_bet);
+        this->amount_bet *= 2;
         continue_step = false;
         break;
     }
     return continue_step;
+}
+
+void PlayerGame::result(bool win)
+{
+    if (win)
+    {
+        double amount_win = this->amount_bet * 2;
+
+        if (this->is_blackjack())
+        {
+            amount_win = this->amount_bet + (this->amount_bet * (3 / 2));
+            amount_win = std::round(amount_win);
+        }
+
+        this->player->add_money((uint)amount_win);
+    }
+    this->amount_bet = 0;
 }
 
 void PlayerGame::set_amount_bet(uint amount)
@@ -154,3 +201,4 @@ std::string PlayerGame::sprint() const
 
     return buffAsStdOStrStream.str();
 }
+//

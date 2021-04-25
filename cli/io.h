@@ -35,6 +35,8 @@ namespace IO
     }
 
     uint ask_uint(const std::string &q, uint min = 0, uint max = UINT32_MAX);
+
+    void wait_action(const std::string &q);
 };
 
 static void out_on_invalid_value_passed(const std::string &q)
