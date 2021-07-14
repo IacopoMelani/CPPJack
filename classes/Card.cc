@@ -9,11 +9,11 @@
 
 std::array<unsigned int, 13> allValue = {11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10};
 
-std::array<std::string, 4> allSeeds = {"diamonds", "clubs", "hearts", "spades"};
+std::array<std::string, 4> allSuits = {"diamonds", "clubs", "hearts", "spades"};
 
 std::array<std::string, 13> allSymbols = {ACE, "Two", "Three", "Four", "Five", "Six", "Seven", "Height", "Nine", "Ten", "Jack", "Queen", "King"};
 
-Card::Card(const std::string &seed, const std::string &symbol, unsigned int value) : seed(seed),
+Card::Card(const std::string &suit, const std::string &symbol, unsigned int value) : suit(suit),
                                                                                      symbol(symbol),
                                                                                      value(value),
                                                                                      hide(false)
@@ -65,7 +65,7 @@ void Card::set_hide(bool value)
 std::string Card::sprint() const
 {
     char buff[100];
-    snprintf(buff, sizeof(buff), "%s of %s", this->symbol.c_str(), this->seed.c_str());
+    snprintf(buff, sizeof(buff), "%s of %s", this->symbol.c_str(), this->suit.c_str());
     std::string buffAsStdStr = buff;
     return buffAsStdStr;
 }

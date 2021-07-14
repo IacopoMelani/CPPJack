@@ -55,13 +55,13 @@ size_t Deck::get_total_cards() const
 
 void Deck::init_deck()
 {
-    for (auto seed : allSeeds)
+    for (auto suit : allSuits)
     {
         int indexSymbol = 0;
         for (auto symbol : allSymbols)
         {
             unsigned int value = allValue[indexSymbol];
-            Card *card = new Card(seed, symbol, value);
+            Card *card = new Card(suit, symbol, value);
             this->add_card(card);
             indexSymbol++;
         }
@@ -70,9 +70,9 @@ void Deck::init_deck()
 
 void Deck::shuffle()
 {
-    unsigned seed = std::chrono::system_clock::now()
+    unsigned suit = std::chrono::system_clock::now()
                         .time_since_epoch()
                         .count();
 
-    std::shuffle(std::begin(this->cards), std::end(this->cards), std::default_random_engine(seed));
+    std::shuffle(std::begin(this->cards), std::end(this->cards), std::default_random_engine(suit));
 }

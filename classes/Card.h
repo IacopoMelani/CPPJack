@@ -7,19 +7,19 @@
 #include "Print.h"
 
 extern std::array<unsigned int, 13> allValue;
-extern std::array<std::string, 4> allSeeds;
+extern std::array<std::string, 4> allSuits;
 extern std::array<std::string, 13> allSymbols;
 
 class Card : public Print
 {
 protected:
-    std::string seed;
+    std::string suit;
     std::string symbol;
     unsigned int value;
     bool hide;
 
 public:
-    Card(const std::string &seed, const std::string &symbol, unsigned int value);
+    Card(const std::string &suit, const std::string &symbol, unsigned int value);
     ~Card();
 
     unsigned int get_value();
