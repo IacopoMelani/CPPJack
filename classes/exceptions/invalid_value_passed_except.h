@@ -4,16 +4,14 @@
 #include <exception>
 #include <string>
 
+#include "cppjack_std_except.h"
+
 namespace IO
 {
-    class InvalidValuePassedException : public std::exception
+    class InvalidValuePassedException : public CPPJackStdExcept
     {
-    protected:
-        std::string msg;
-
     public:
         InvalidValuePassedException(const std::string &msg = "Invalid value passed");
-        virtual const char *what() const noexcept override;
     };
 }
 

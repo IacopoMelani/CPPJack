@@ -4,15 +4,12 @@
 #include <exception>
 #include <string>
 
-class NotEnoughCardsExecption : public std::exception
-{
-protected:
-    std::string msg;
+#include "cppjack_std_except.h"
 
+class NotEnoughCardsExecption : public CPPJackStdExcept
+{
 public:
     NotEnoughCardsExecption(const std::string &msg = "Not enough cards");
-
-    virtual const char *what() const noexcept override;
 };
 
 #endif // _NOT_ENOUGH_CARDS_EXCEPT_H
